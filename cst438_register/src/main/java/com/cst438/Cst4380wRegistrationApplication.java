@@ -15,7 +15,6 @@ public class Cst4380wRegistrationApplication  {
 		SpringApplication.run(Cst4380wRegistrationApplication.class, args);
 	}
 	
-	
 	@Bean(name = "GradebookService")
 	@ConditionalOnProperty(prefix = "gradebook", name = "service", havingValue = "MQ")
 	public GradebookService gradebookServiceMQ() {
