@@ -65,7 +65,7 @@ public class StudentManagementController {
 			
 		if (student.isPresent()) {
 			student.get().setStatusCode(status);
-			student.get().setStatus(msg);
+			student.get().setStatus(msg == null || msg.isEmpty() ? null : msg);
 			studentRepository.save(student.get());
 			return;
 		} else {

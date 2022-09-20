@@ -29,6 +29,7 @@ import com.cst438.domain.StudentDTO;
 public class StudentManagementControllerTest {
 	static final String URL = "http://localhost:8080";
 	public static final int TEST_STUDENT_ID = 1;
+	public static final int TEST_STUDENT_HOLD = 1;
 	public static final String TEST_STUDENT_EMAIL = "test@csumb.edu";
 	public static final String TEST_STUDENT_NAME  = "test";
 	
@@ -102,7 +103,7 @@ public class StudentManagementControllerTest {
 		
 		response = mvc.perform(
 				MockMvcRequestBuilders
-			      .put("/student/1?status=0&msg=")
+			      .put(String.format("/student/%d?status=%d&msg=", TEST_STUDENT_ID, TEST_STUDENT_HOLD))
 			      .characterEncoding("utf-8")
 			      .contentType(MediaType.APPLICATION_JSON)
 			      .accept(MediaType.APPLICATION_JSON))
@@ -119,7 +120,7 @@ public class StudentManagementControllerTest {
 		
 		response = mvc.perform(
 				MockMvcRequestBuilders
-				  .put("/student/1?status=0&msg=")
+				  .put(String.format("/student/%d?status=%d&msg=", TEST_STUDENT_ID, TEST_STUDENT_HOLD))
 				  .characterEncoding("utf-8")
 			      .contentType(MediaType.APPLICATION_JSON)
 			      .accept(MediaType.APPLICATION_JSON))
