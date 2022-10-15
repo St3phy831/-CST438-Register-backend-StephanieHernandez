@@ -21,7 +21,7 @@ import java.util.Optional;
 
 @RestController
 // Accept request from these servers/allow call from these
-@CrossOrigin(origins = {"http://localhost:3000", "https://registerf-cst438.herokuapp.com/"})
+@CrossOrigin(origins = {"http://localhost:3000"})
 public class StudentManagementController {
 	
 	@Autowired
