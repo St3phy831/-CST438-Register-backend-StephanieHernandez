@@ -2,14 +2,10 @@ package com.cst438;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 
 import java.util.concurrent.TimeUnit;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -20,7 +16,6 @@ import com.cst438.domain.Student;
 import com.cst438.domain.StudentRepository;
 
 @SpringBootTest
-@TestInstance(PER_CLASS)
 public class EndToEndAddStudentTest {
 	public static final String CHROME_DRIVER_FILE_LOCATION = "/Users/stephaniehernandez/Downloads/chromedriver";
 	public static final String URL = "http://localhost:3000/admin";
@@ -37,8 +32,8 @@ public class EndToEndAddStudentTest {
 	@Autowired
 	StudentRepository studentRepository;
 
-	@BeforeAll
-	public void before() {
+	@Test
+	public void addExistingStudent() throws Exception {
 		// Make sure test is enrolled
 		Student s = studentRepository.findByEmail(TEST_STUDENT_ENROLLED_EMAIL);
 		if (s == null) {
@@ -49,28 +44,7 @@ public class EndToEndAddStudentTest {
 			s.setStatus(STATUS);
 			studentRepository.save(s);
 		}
-		// Make sure test 2 is not enrolled
-		s = studentRepository.findByEmail(TEST_STUDENT_NOT_ENROLLED_EMAIL);
-		if (s != null) {
-			studentRepository.delete(s);
-		}
-	}
 
-	@AfterAll
-	public void after() {
-		// Make sure tests are deleted
-		Student s = studentRepository.findByEmail(TEST_STUDENT_ENROLLED_EMAIL);
-		if (s != null) {
-			studentRepository.delete(s);
-		}
-		s = studentRepository.findByEmail(TEST_STUDENT_NOT_ENROLLED_EMAIL);
-		if (s != null) {
-			studentRepository.delete(s);
-		}
-	}
-
-	@Test
-	public void addExistingStudent() throws Exception {
 		System.setProperty("webdriver.chrome.driver", CHROME_DRIVER_FILE_LOCATION);
 		WebDriver driver = new ChromeDriver();
 		// Puts an Implicit wait for 10 seconds before throwing exception
@@ -98,12 +72,23 @@ public class EndToEndAddStudentTest {
 		} catch (Exception ex) {
 			throw ex;
 		} finally {
+			// Make sure test is deleted (for db cleanup)
+			s = studentRepository.findByEmail(TEST_STUDENT_ENROLLED_EMAIL);
+			if (s != null) {
+				studentRepository.delete(s);
+			}
 			driver.quit();
 		}
 	}
 
 	@Test
 	public void addStudent() throws Exception {
+		// Make sure test2 is not enrolled
+		Student s = studentRepository.findByEmail(TEST_STUDENT_NOT_ENROLLED_EMAIL);
+		if (s != null) {
+			studentRepository.delete(s);
+		}
+
 		System.setProperty("webdriver.chrome.driver", CHROME_DRIVER_FILE_LOCATION);
 		WebDriver driver = new ChromeDriver();
 		// Puts an Implicit wait for 10 seconds before throwing exception
@@ -129,12 +114,17 @@ public class EndToEndAddStudentTest {
 			assertEquals(ADD_MSG, toast_text);
 
 			// verify that student was inserted to database
-			Student s = studentRepository.findByEmail(TEST_STUDENT_NOT_ENROLLED_EMAIL);
+			s = studentRepository.findByEmail(TEST_STUDENT_NOT_ENROLLED_EMAIL);
 			assertNotNull(s, "Student was not found in database.");
 			Thread.sleep(SLEEP_DURATION);
 		} catch (Exception ex) {
 			throw ex;
 		} finally {
+			// Make sure test2 is deleted (for db cleanup)
+			s = studentRepository.findByEmail(TEST_STUDENT_NOT_ENROLLED_EMAIL);
+			if (s != null) {
+				studentRepository.delete(s);
+			}
 			driver.quit();
 		}
 	}
